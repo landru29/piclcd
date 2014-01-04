@@ -1,10 +1,25 @@
 #include <pic18fregs.h>
 #include <delay.h>
+#include <stdio.h>
 #include "lcd.h"
 
-#define LCDPAUSE delay100tcy(CRISTAL_FREQ*8);
+unsigned int    _cristalMhz;
+unsigned char   _autoRedirect=0;
 
-void lcd_init() {
+/**
+ * Initialize the LCD
+ *
+ * @param cristalMhz Cristal frequency in Mhz
+ *
+ */
+void lcd_init(unsigned int cristalMhz, unsigned char autoRedirect)
+{
+    _cristalMhz = cristalMhz;
+    _autoRedirect = autoRedirect;
+
+    if (autoRedirect) {
+        stdout = STREAM_USER;
+    }
     /* Preparing outputs */
     LCD_DATA_CNF = 0;
     LCD_RS_CNF = 0;
@@ -13,28 +28,33 @@ void lcd_init() {
     LCD_E=0;
 
     /* Device initialization */
-    delay1ktcy(CRISTAL_FREQ*4); /* Wait for 16ms after poweron (here 16ms) */
-    LCD_DATA = 0x3C;
+    delay1ktcy(cristalMhz*4); /* Wait for 16ms after poweron (here 16ms) */
+    //LCD_DATA = 0x3C;
+    LCD_DATA = 0x30;
     LCD_RS = 0;
     LCD_RW = 0;
 
     /* Step 1*/
     LCD_E=1;
-    delay1ktcy(CRISTAL_FREQ); /* Wait for 4.1ms */
-    delay10tcy(3*CRISTAL_FREQ);
+    delay1ktcy(cristalMhz); /* Wait for 4.1ms */
+    delay10tcy(3*cristalMhz);
+
+
     LCD_E=0;
-    LCDPAUSE;
+    delay100tcy(cristalMhz*8);
     LCD_E=1;
-    delay10tcy(3+CRISTAL_FREQ); /* Wait for 100µs */
+    delay10tcy(3+cristalMhz); /* Wait for 100µs */
     LCD_E=0;
-    LCDPAUSE;
+    delay100tcy(cristalMhz*8);
     LCD_E=1;
-    delay10tcy(2*CRISTAL_FREQ); /* Wait for 42µs */
+    delay10tcy(2*cristalMhz); /* Wait for 42µs */
     LCD_E=0;
-    LCDPAUSE;
+    delay100tcy(cristalMhz*8);
 
     /* Display off */
     //lcd_send_cmd(0x08);
+    //lcd_send_cmd(DISPLAY_OFF);
+    lcd_send_cmd(0x08);
 
     /* Display clear */
     lcd_clear();
@@ -50,34 +70,76 @@ void lcd_init() {
 
 }
 
-void lcd_print(char* st) {
+/**
+ * Display a string
+ *
+ * @param st String to display
+ */
+void lcd_print(char* st)
+{
     unsigned char i;
-    for(i=0;(st[i]!=0) && (i<16);i++)
+    for(i=0;(st[i]!=0) && (i<16);i++) {
         lcd_send_data((unsigned char)st[i]);
+    }
 }
 
-void lcd_pushLetter(unsigned char l) {
+/**
+ * Putchar redirection to make printf works
+ *
+ * @param c character to display
+ */
+void putchar(char c) __wparam
+{
+    if (_autoRedirect) lcd_send_data(c);
+}
+
+/**
+ * Display one letter
+ *
+ * @param l character to display
+ */
+void lcd_pushLetter(unsigned char l)
+{
     lcd_send_data(l);
 }
 
-void lcd_setLine(unsigned char nb) {
+/**
+ * Specify the line of the cursor
+ *
+ * @param nb line number (0 is the first line)
+ */
+void lcd_setLine(unsigned char nb)
+{
     unsigned char i;
     lcd_ddram(SECOND_LINE*nb);
-    for(i=0;i<16;i++) lcd_send_data(' ');
+    for(i=0;i<16;i++) {
+        lcd_send_data(' ');
+    }
     lcd_ddram(SECOND_LINE*nb);
 }
 
+/**
+ * Clear the LCD screen
+ */
 void lcd_clear()
 {
 	lcd_send_cmd(0x01);
 
 }
 
+/**
+ * Put the cursor at home
+ */
 void lcd_home()
 {
 	lcd_send_cmd(0x02);
 }
 
+/**
+ * Select DDRAM address
+ *
+ * @param address Adress to select
+ */
 void lcd_ddram(unsigned char address)
 {
 	lcd_send_cmd((address & 0x7F) | 0x80);
@@ -87,11 +149,10 @@ void lcd_ddram(unsigned char address)
 /**
  * set_emode(options) - Set entry mode
  *
- * Options:
- *
- *  INC_CURSOR - Incremnt cursor after character written
- *  DEC_CURSOR - Decrement cursor after character written
- *  SHIFT_ON - Switch Cursor shifting on
+ * @param options:
+ *     INC_CURSOR - Incremnt cursor after character written
+ *     DEC_CURSOR - Decrement cursor after character written
+ *     SHIFT_ON   - Switch Cursor shifting on
  */
 void lcd_emode(unsigned char options)
 {
@@ -102,12 +163,11 @@ void lcd_emode(unsigned char options)
 /**
  * set_dmode(options) - Configure display mode
  *
- * Options:
- *
- *  DISPLAY_ON - Turn Display on
- *  DISPLAY_OFF - Turn Display off
- *  CURSOR_ON  - Turn Cursor on
- *  BLINK_ON - Blink Cursor
+ * @param options:
+ *     DISPLAY_ON  - Turn Display on
+ *     DISPLAY_OFF - Turn Display off
+ *     CURSOR_ON   - Turn Cursor on
+ *     BLINK_ON    - Blink Cursor
  */
 void lcd_dmode(unsigned char options)
 {
@@ -118,11 +178,10 @@ void lcd_dmode(unsigned char options)
 /**
  * set_cmode(options) - Configure cursor mode
  *
- * Options:
- *
- *  SHIFT_DISP - Shift Display
- *  SHIFT_RIGHT - Move cursor right
- *  SHIFT_LEFT - Move cursor left
+ * @param options:
+ *     SHIFT_DISP  - Shift Display
+ *     SHIFT_RIGHT - Move cursor right
+ *     SHIFT_LEFT  - Move cursor left
  */
 void lcd_cmode(unsigned char options)
 {
@@ -145,8 +204,13 @@ void lcd_fmode(unsigned char options)
 	lcd_send_cmd((options & 0x1F) | 0x20);
 }
 
-void lcd_send_cmd(unsigned char cmd) {
-
+/**
+ * Send a command to the LCD screen
+ *
+ * @param cmd Command to send
+ */
+void lcd_send_cmd(unsigned char cmd)
+{
     while (lcd_busy());
 
     LCD_RS = 0;
@@ -156,11 +220,16 @@ void lcd_send_cmd(unsigned char cmd) {
     LCD_DATA=cmd;
 
     LCD_E=1;
-    LCDPAUSE;
+    delay100tcy(_cristalMhz*8);
     LCD_E=0;
     LCD_DATA=0;
 }
 
+/**
+ * Send data to the LCD screen
+ *
+ * @param dataval Data to send
+ */
 void lcd_send_data(unsigned char dataval)
 {
 
@@ -170,13 +239,18 @@ void lcd_send_data(unsigned char dataval)
 	LCD_RS = 1;
 	LCD_DATA = dataval;
 	LCD_E = 1;
-    LCDPAUSE;
+    delay100tcy(_cristalMhz*8);
 	LCD_E = 0;
 	LCD_DATA=0;
 }
 
-
-unsigned char lcd_busy() {
+/**
+ * Check if the LCD screen is busy
+ *
+ * @return true if busy
+ */
+unsigned char lcd_busy()
+{
 	unsigned char loop=0;
 	unsigned char dataval;
 
@@ -185,7 +259,7 @@ unsigned char lcd_busy() {
 	LCD_RS = 0;
 	LCD_E = 1;
 
-	LCDPAUSE;
+	delay100tcy(_cristalMhz*8);
 
 	dataval = LCD_DATA;
 	LCD_E = 0;

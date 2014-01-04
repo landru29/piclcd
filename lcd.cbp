@@ -16,11 +16,16 @@
 					<Add option="--verbose" />
 					<Add option="-p18f4550" />
 					<Add option="--use-non-free" />
+					<Add option="-L/usr/local/share/sdcc/lib/pic16/" />
+					<Add option="-L/usr/local/share/sdcc/non-free/lib/pic16" />
+					<Add option="-I/usr/local/share/sdcc/non-free/include/pic16" />
+					<Add directory="/usr/local/share/sdcc/include/pic16" />
+					<Add directory="/usr/local/share/sdcc/non-free/include/pic16" />
 				</Compiler>
 				<Linker>
-					<Add option="-L/usr/share/sdcc3/lib/pic16/" />
-					<Add option="-L/usr/share/sdcc3/non-free/lib/pic16" />
-					<Add option="-I/usr/share/sdcc3/non-free/include/pic16" />
+					<Add option="-I/usr/local/share/sdcc/include/pic16" />
+					<Add option="-I/usr/local/share/sdcc/non-free/include/pic16" />
+					<Add option="-L/usr/local/share/sdcc/non-free/lib/pic16" />
 					<Add option="-llibio18f4550.lib" />
 					<Add option="-llibc18f.lib" />
 				</Linker>

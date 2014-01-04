@@ -1,20 +1,25 @@
 #ifndef __LCD_H__
 #define __LCD_H__
 
+#ifndef LCD_DATA
+    #define LCD_DATA_CNF    TRISD
+    #define LCD_DATA        LATD
+#endif // LCD_DATA
 
-#define CRISTAL_FREQ    48
+#ifndef LCD_RS
+    #define LCD_RS_CNF      TRISCbits.TRISC2
+    #define LCD_RS          LATCbits.LATC2
+#endif // LCD_RS
 
-#define LCD_DATA_CNF    TRISD
-#define LCD_DATA        LATD
+#ifndef LCD_RW
+    #define LCD_RW_CNF      TRISCbits.TRISC1
+    #define LCD_RW          LATCbits.LATC1
+#endif // LCD_RW
 
-#define LCD_RS_CNF      TRISCbits.TRISC2
-#define LCD_RS          LATCbits.LATC2
-
-#define LCD_RW_CNF      TRISCbits.TRISC1
-#define LCD_RW          LATCbits.LATC1
-
-#define LCD_E_CNF       TRISCbits.TRISC0
-#define LCD_E           LATCbits.LATC0
+#ifndef LCD_E
+    #define LCD_E_CNF       TRISCbits.TRISC0
+    #define LCD_E           LATCbits.LATC0
+#endif // LCD_E
 
 
 //Entry mode variables
@@ -43,7 +48,7 @@
 #define FIRST_LINE 0x00
 #define SECOND_LINE 0x40
 
-void lcd_init();
+void lcd_init(unsigned int cristalMhz, unsigned char autoRedirect);
 void lcd_print(char* st);
 void lcd_pushLetter(unsigned char l);
 void lcd_setLine(unsigned char nb);
