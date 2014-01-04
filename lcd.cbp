@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="lcd" />
+		<Option pch_mode="2" />
+		<Option compiler="sdcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/lcd" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="sdcc" />
+				<Compiler>
+					<Add option="-mpic16" />
+					<Add option="--verbose" />
+					<Add option="-p18f4550" />
+					<Add option="--use-non-free" />
+				</Compiler>
+				<Linker>
+					<Add option="-L/usr/share/sdcc3/lib/pic16/" />
+					<Add option="-L/usr/share/sdcc3/non-free/lib/pic16" />
+					<Add option="-I/usr/share/sdcc3/non-free/include/pic16" />
+					<Add option="-llibio18f4550.lib" />
+					<Add option="-llibc18f.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cp ~/.sdcc/mypk2cmd $(PROJECT_DIR)$(TARGET_OUTPUT_FILE)" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<Unit filename="config.h" />
+		<Unit filename="lcd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lcd.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
