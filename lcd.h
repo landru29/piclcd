@@ -21,38 +21,57 @@
     #define LCD_E           LATCbits.LATC0
 #endif // LCD_E
 
+#define LCD_DATA_4BITS          0x00
+#define LCD_DATA_8BITS          0x01
+#define USE_PRINTF              0x01
+#define MANUAL_USE              0x00
 
 //Entry mode variables
-#define INC_CURSOR 0x02
-#define DEC_CURSOR 0x00
-#define SHIFT_ON 0x01
+#define ENTRY_VARIABLE_SET      0x04
+#define INC_CURSOR              0x02
+#define DEC_CURSOR              0x00
+#define SHIFT_ON                0x01
+#define SHIFT_OFF               0x00
 
 //Display control variables
-#define DISPLAY_ON 0x04
-#define DISPLAY_OFF 0x00
-#define CURSOR_ON 0x02
-#define BLINK_ON 0x01
+#define DISPLAY_VARIABLE_SET    0x08
+#define DISPLAY_ON              0x04
+#define DISPLAY_OFF             0x00
+#define CURSOR_ON               0x02
+#define CURSOR_OFF              0x00
+#define BLINK_ON                0x01
+#define BLINK_OFF               0x00
 
 //Cursor move variables
-#define SHIFT_DISP 0x08
-#define SHIFT_RIGHT 0x04
-#define SHIFT_LEFT 0x00
+#define CURSOR_VARIABLE_SET     0x10
+#define SHIFT_DISP              0x08
+#define SHIFT_RIGHT             0x04
+#define SHIFT_LEFT              0x00
 
 //Function set variables
-#define IFACE_4BIT 0x00
-#define IFACE_8BIT 0x10
-#define DUAL_LINE 0x08
-#define DOTS_5X11 0x04
+#define FUNCTION_SET            0x20
+#define IFACE_4BIT              0x00
+#define IFACE_8BIT              0x10
+#define DUAL_LINE               0x08
+#define DOTS_5X7                0x00
+#define DOTS_5X10               0x04
 
 //DDRAM locations
-#define FIRST_LINE 0x00
-#define SECOND_LINE 0x40
+#define DDRAM_SET               0x80
+#define FIRST_LINE              0x00
+#define SECOND_LINE             0x40
 
-void lcd_init(unsigned int cristalMhz, unsigned char autoRedirect);
+//Standard command
+#define LCD_HOME                0x02
+#define LCD_CLEAR               0x01
+
+
+
+void lcd_init(unsigned int cristalMhz, unsigned char autoRedirect, unsigned char is_8bit_data);
 void lcd_print(char* st);
 void lcd_pushLetter(unsigned char l);
 void lcd_setLine(unsigned char nb);
-unsigned char lcd_busy();
+//void lcd_busy();
 void lcd_clear();
 void lcd_home();
 void lcd_send_cmd(unsigned char cmd);

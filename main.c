@@ -10,8 +10,7 @@ Designed for a 20MHz cristal
 */
 
 void main() {
-    lcd_init(48, 1);
-    //lcd_print("Hello world");
+    lcd_init(48, USE_PRINTF, LCD_DATA_4BITS);
     printf("Coucou!");
     while (1);
 }

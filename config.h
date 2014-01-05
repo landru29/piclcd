@@ -7,14 +7,14 @@ __code 	 __at (__CONFIG1L) _conf0	= _PLLDIV_5_1L  & _CPUDIV_OSC1_PLL2_1L & _USBD
 __code 	 __at (__CONFIG1H) _conf1	= _FOSC_HSPLL_HS_1H;
 __code 	 __at (__CONFIG2L) _conf2	= _VREGEN_ON_2L;
 __code 	 __at (__CONFIG2H) _conf3	= _WDT_OFF_2H;
-__code 	 __at (__CONFIG3H) _conf4	= _PBADEN_OFF_3H;
-__code 	 __at (__CONFIG4L) _conf5	= _XINST_OFF_4L & _LVP_OFF_4L ;
-__code 	 __at (__CONFIG5L) _conf6	= _CP0_OFF_5L ;
-//code 	char at __CONFIG5H _conf7	=
-//code 	char at __CONFIG6L _conf8	=
-//code 	char at __CONFIG6H _conf9	=
-//code 	char at __CONFIG7L _conf10	=
-//code 	char at __CONFIG7H _conf11	=
+__code 	 __at (__CONFIG3H) _conf4	= _PBADEN_OFF_3H & _MCLRE_ON_3H;
+__code 	 __at (__CONFIG4L) _conf5	= _XINST_OFF_4L & _LVP_OFF_4L & _DEBUG_OFF_4L;
+__code 	 __at (__CONFIG5L) _conf6	= _CP0_OFF_5L & _CP1_OFF_5L & _CP2_OFF_5L & _CP3_OFF_5L;
+__code 	 __at (__CONFIG5H) _conf7	= _CPB_OFF_5H & _CPD_OFF_5H;
+__code 	 __at (__CONFIG6L) _conf8	= _WRT0_OFF_6L & _WRT1_OFF_6L & _WRT2_OFF_6L & _WRT3_OFF_6L;
+__code 	 __at (__CONFIG6H) _conf9	= _WRTC_OFF_6H & _WRTB_OFF_6H & _WRTD_OFF_6H;
+__code 	 __at (__CONFIG7L) _conf10	= _EBTR0_OFF_7L & _EBTR1_OFF_7L & _EBTR2_OFF_7L & _EBTR3_OFF_7L;
+__code 	 __at (__CONFIG7H) _conf11	= _EBTRB_OFF_7H;
 
 
 
