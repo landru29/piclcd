@@ -71,7 +71,6 @@ void lcd_init(unsigned int cristalMhz, unsigned char autoRedirect, unsigned char
 void lcd_print(char* st);
 void lcd_pushLetter(unsigned char l);
 void lcd_setLine(unsigned char nb);
-//void lcd_busy();
 void lcd_clear();
 void lcd_home();
 void lcd_send_cmd(unsigned char cmd);
